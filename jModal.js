@@ -7,8 +7,8 @@
 
 	/**
 	 *
-	 * @param element
-	 * @param options
+	 * @param element {Element}
+	 * @param options {Object}
 	 * @constructor
 	 */
 
@@ -32,15 +32,17 @@
 
 		this.bOpen = false;
 
-		this.initialize();
-		this.attachEvents();
+		this._initialize();
+		this._attachEvents();
 	};
 
 	$.extend(Modal.prototype, {
-		initialize: function initialize() {
+		_initialize: function _initialize() {
 			if (!this.hParam.ajax) {
 				this.set(this.hParam.html);
 			}
+
+			return this;
 		},
 
 		set: function append(html) {
@@ -50,15 +52,11 @@
 				.append(this.hElements.jClose);
 		},
 
-		onErrorTransport: function onErrorTransport() {
-			console.log('Get error while transporting modal html');
-		},
-
-		attachEvents: function attachEvents() {
+		_attachEvents: function _attachEvents() {
 			this.hElements.jElement.on(this.hParam.events.open, $.proxy(this.openModal, this));
 			this.hElements.jModal.add(this.hElements.jClose)
 				.on(this.hParam.events.close, $.proxy(this.closeModal, this));
-			this.hElements.jDocument.on('keyup', $.proxy(this.keyClose, this));
+			this.hElements.jDocument.on('keyup', $.proxy(this._keyClose, this));
 			this.hElements.jContent.on(this.hParam.event, function(event) {
 				event.stopPropagation();
 			});
@@ -71,17 +69,23 @@
 				event.preventDefault();
 			}
 
+			// TODO: wait for any async function
 			if (_this.hParam.ajax) {
 				$.ajax($.extend({}, _this.hParam.ajaxSettings, _this.hParam.ajax, {
 					success: function(data) {
 						_this.set(data);
-						_this.showModal(data);
+						_this.showModal();
 
-						_this.hParam.ajax.success(data);
+						// TODO: remove check for callback passed
+						if (_this.hParam.ajax.success) {
+							_this.hParam.ajax.success.apply(this, arguments);
+						}
 					},
 					error: function(jqXHR, textStatus, errorThrown) {
-						_this.onErrorTransport(jqXHR, textStatus, errorThrown);
-						_this.hParam.ajax.error(jqXHR, textStatus, errorThrown);
+						// TODO: remove check for callback passed
+						if (_this.hParam.ajax.error) {
+							_this.hParam.ajax.error.apply(this, arguments);
+						}
 					}
 				}));
 			} else {
@@ -110,23 +114,32 @@
 		},
 
 		// Handle 'esc' key
-		keyClose: function keyClose(event) {
+		_keyClose: function _keyClose(event) {
 			if (event && event.keyCode === 27) {
 				this.closeModal();
 			}
 		}
 	});
 
-	$.fn.jModal = function (option, args) {
+	$.fn.jModal = function (option, global) {
+		var args = arguments;
+
 		return this.each(function () {
 			if (!$.data(this, 'jModal')) {
 				$.data(this, 'jModal', new Modal(this, option));
 			} else {
-				if ($(this).data('jModal')[option]) {
-					$(this).data('jModal')[option](args);
-				} else {
-					$.error('No such method in jModal plugin')
+				var jModal = $(this);
+
+				if (args.length) {
+					if (option) {
+						// TODO: extend to getters
+						jModal.data('jModal')[option](global);
+					} else {
+						$.error('No such method in jModal plugin')
+					}
 				}
+
+				return jModal;
 			}
 
 			return this;
