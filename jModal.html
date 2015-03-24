@@ -48,9 +48,12 @@
 <body>
     <a href="#" class="modal1">Sync modal with custom 'close text' param</a><br>
     <a href="#" class="modal2">Sync modal with setted default 'html' & 'close text' params</a><br>
-    <a href="#" class="modal3">Async modal with preparation of inner html (could be styled on ajax success)</a>
+    <a href="#" class="modal3">Async modal with preparation of inner html (could be styled on ajax success)</a><br>
+    <a href="#" class="modal4">Async modal with content setted on promise and preparation of inner html</a>
 
     <script>
+
+        // Static usage
         $('.modal1').jModal({
             html: '<div>My modal</div>',
             closeText: 'x'
@@ -73,6 +76,21 @@
             prepare: function(data) {
                 return data.html;
             }
+        });
+
+        var $deferred = $.Deferred();
+
+        $('.modal4').jModal({
+            promise: $deferred,
+            prepare: function(data) {
+                return data.html;
+            }
+        }).on('click', function() {
+            window.setTimeout(function() {
+                $deferred.resolve({
+                    html: 'promise html'
+                });
+            }, 1000);
         });
     </script>
 </body>
