@@ -29,9 +29,9 @@
         };
 
         this.hElements.jContent = this.hElements.jModal.children();
-    
+
         this.bOpen = false;
-    
+
         this._initialize();
         this._attachEvents();
     };
@@ -50,14 +50,17 @@
                 .addClass(this.hParam.classes.inner)
                 .html(this.hParam.prepare(html))
                 .append(this.hElements.jClose);
+
+            // TODO: move it to attachEvents method
+            this.hElements.jClose.on(this.hParam.events.close, $.proxy(this.closeModal, this));
         },
 
         _attachEvents: function _attachEvents() {
             this.hElements.jElement.on(this.hParam.events.open, $.proxy(this.openModal, this));
-            this.hElements.jModal.add(this.hElements.jClose)
-                .on(this.hParam.events.close, $.proxy(this.closeModal, this));
             this.hElements.jDocument.on('keyup', $.proxy(this._keyClose, this));
-            this.hElements.jContent.on(this.hParam.event, function(event) {
+            this.hElements.jModal.on(this.hParam.events.close, $.proxy(this.closeModal, this));
+
+            this.hElements.jContent.on(this.hParam.events.close, function(event) {
                 event.stopPropagation();
             });
         },
