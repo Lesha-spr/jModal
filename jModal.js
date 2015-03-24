@@ -59,7 +59,6 @@
             this.hElements.jElement.on(this.hParam.events.open, $.proxy(this.openModal, this));
             this.hElements.jDocument.on('keyup', $.proxy(this._keyClose, this));
             this.hElements.jModal.on(this.hParam.events.close, $.proxy(this.closeModal, this));
-
             this.hElements.jContent.on(this.hParam.events.close, function(event) {
                 event.stopPropagation();
             });
