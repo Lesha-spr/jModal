@@ -7,12 +7,12 @@
 
     /**
      *
-     * @param element {Element}
+     * @param jElement {Object}
      * @param actions {Object}
      * @constructor
      */
 
-    var Modal = function Modal(element, actions) {
+    var Modal = function Modal(jElement, actions) {
         var bPassedOptions = actions && !$.isEmptyObject(actions),
             sClose;
 
@@ -21,7 +21,7 @@
         sClose = typeof this.hParam.closeText === 'string' ? this.hParam.closeText : $.fn.jModal.defaults.closeText;
 
         this.hElements = {
-            jElement: $(element),
+            jElement: jElement,
             jDocument: $(document),
             jBody: $('body'),
             jModal: $(this.hParam.modal).addClass(this.hParam.classes.modal),
@@ -140,11 +140,12 @@
         var args = arguments;
 
         return this.each(function () {
+            var jModal = $(this);
+
             if (!$.data(this, 'jModal')) {
-                $.data(this, 'jModal', new Modal(this, action));
+                $.data(this, 'jModal', new Modal(jModal, action));
 
             } else {
-                var jModal = $(this);
 
                 if (args.length) {
                     if (typeof jModal.data('jModal')[action] === 'function') {
