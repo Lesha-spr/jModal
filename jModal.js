@@ -66,13 +66,6 @@
             });
         },
 
-        _detachEvents: function() {
-            this.hElements.jElement
-                .add(this.hElements.jModal)
-                .add(this.hElements.jClose)
-                .off('.jmodal');
-        },
-
         openModal: function openModal(event) {
             var _this = this;
 
@@ -142,14 +135,8 @@
         destroy: function destroy() {
             this._detachEvents();
 
-            this.hElements.jModal.empty().remove();
-            this.hElements.jElement.data('jModal', null);
-
-            if (this.hParam !== $.fn.jModal.defaults) {
-                delete this.hParam;
-            }
-
-            delete this;
+            this.hElements.jElement.off('.jmodal').data('jModal', null);
+            this.hElements.jModal.remove();
         }
     });
 
