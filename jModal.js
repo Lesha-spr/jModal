@@ -133,8 +133,6 @@
         },
 
         destroy: function destroy() {
-            this._detachEvents();
-
             this.hElements.jElement.off('.jmodal').data('jModal', null);
             this.hElements.jModal.remove();
         }
