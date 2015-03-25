@@ -149,7 +149,7 @@
                 delete this.hParam;
             }
 
-            delete this.hElements;
+            delete this;
         }
     });
 
