@@ -78,7 +78,7 @@
                 $.ajax($.extend({}, _this.hParam.ajaxSettings, _this.hParam.ajax, {
                     success: function(data) {
                         _this.set(data);
-                        _this.showModal();
+                        _this._showModal();
 
                         if (_this.hParam.ajax.success) {
                             _this.hParam.ajax.success.apply(this, arguments);
@@ -89,25 +89,23 @@
             } else if (_this.hParam.promise && _this.hParam.promise.done) {
                 _this.hParam.promise.done(function(data) {
                     _this.set(data);
-                    _this.showModal();
+                    _this._showModal();
 
                     return this;
                 });
 
             } else {
-                _this.showModal();
+                _this._showModal();
             }
 
             return this.hElements.jElement;
         },
 
-        showModal: function showModal() {
+        _showModal: function _showModal() {
             this.hElements.jBody.append(this.hElements.jModal);
             this.bOpen = true;
 
             this.hParam.onOpen(this);
-
-            return this.hElements.jElement;
         },
 
         closeModal: function closeModal(event) {
