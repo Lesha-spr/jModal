@@ -52,16 +52,25 @@
                 .append(this.hElements.jClose);
 
             // TODO: move it to attachEvents method
-            this.hElements.jClose.on(this.hParam.events.close, $.proxy(this.closeModal, this));
+            this.hElements.jClose.on(this.hParam.events.close + '.jmodal', $.proxy(this.closeModal, this));
+
+            return this.hElements.jElement;
         },
 
         _attachEvents: function _attachEvents() {
-            this.hElements.jElement.on(this.hParam.events.open, $.proxy(this.openModal, this));
-            this.hElements.jDocument.on('keyup', $.proxy(this._keyClose, this));
-            this.hElements.jModal.on(this.hParam.events.close, $.proxy(this.closeModal, this));
-            this.hElements.jContent.on(this.hParam.events.close, function(event) {
+            this.hElements.jElement.on(this.hParam.events.open + '.jmodal', $.proxy(this.openModal, this));
+            this.hElements.jDocument.on('keyup.jmodal', $.proxy(this._keyClose, this));
+            this.hElements.jModal.on(this.hParam.events.close + '.jmodal', $.proxy(this.closeModal, this));
+            this.hElements.jContent.on(this.hParam.events.close + '.jmodal', function(event) {
                 event.stopPropagation();
             });
+        },
+
+        _detachEvents: function() {
+            this.hElements.jElement
+                .add(this.hElements.jModal)
+                .add(this.hElements.jClose)
+                .off('.jmodal');
         },
 
         openModal: function openModal(event) {
@@ -95,6 +104,8 @@
             } else {
                 _this.showModal();
             }
+
+            return this.hElements.jElement;
         },
 
         showModal: function showModal() {
@@ -102,6 +113,8 @@
             this.bOpen = true;
 
             this.hParam.onOpen(this);
+
+            return this.hElements.jElement;
         },
 
         closeModal: function closeModal(event) {
@@ -115,6 +128,8 @@
 
                 this.hParam.onClose(this);
             }
+
+            return this.hElements.jElement;
         },
 
         // Handle 'esc' key
@@ -122,6 +137,19 @@
             if (event && event.keyCode === 27) {
                 this.closeModal();
             }
+        },
+
+        destroy: function destroy() {
+            this._detachEvents();
+
+            this.hElements.jModal.empty().remove();
+            this.hElements.jElement.data('jModal', null);
+
+            if (this.hParam !== $.fn.jModal.defaults) {
+                delete this.hParam;
+            }
+
+            delete this.hElements;
         }
     });
 
