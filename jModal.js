@@ -32,23 +32,16 @@
 
         this.bOpen = false;
 
-        this._initialize();
         this._attachEvents();
     };
 
     $.extend(Modal.prototype, {
-        _initialize: function _initialize() {
-            if (!this.hParam.ajax) {
-                this.set(this.hParam.html);
-            }
-
-            return this;
-        },
-
         set: function append(html) {
+            this.hParam.html = html;
+
             this.hElements.jContent
                 .addClass(this.hParam.classes.inner)
-                .html(this.hParam.prepare(html))
+                .html(this.hParam.prepare(this.hParam.html))
                 .append(this.hElements.jClose);
 
             // TODO: move it to attachEvents method
@@ -73,32 +66,13 @@
                 event.preventDefault();
             }
 
-            // TODO: wait for any async function
-            if (_this.hParam.ajax) {
-                $.ajax($.extend({}, _this.hParam.ajaxSettings, _this.hParam.ajax, {
-                    success: function(data) {
-                        _this.set(data);
-                        _this._showModal();
-
-                        if (_this.hParam.ajax.success) {
-                            _this.hParam.ajax.success.apply(this, arguments);
-                        }
-                    }
-                }));
-
-            } else if (_this.hParam.promise && _this.hParam.promise.done) {
-                _this.hParam.promise.done(function(data) {
-                    _this.set(data);
+            $.when($.isFunction(_this.hParam.promise) ? _this.hParam.promise() : _this.hParam.promise)
+                .done(function (data) {
+                    _this.set(data || _this.hParam.html);
                     _this._showModal();
-
-                    return this;
                 });
 
-            } else {
-                _this._showModal();
-            }
-
-            return this.hElements.jElement;
+            return _this.hElements.jElement;
         },
 
         _showModal: function _showModal() {
@@ -181,10 +155,7 @@
             return html;
         },
         onOpen: $.noop,
-        onClose: $.noop,
-        ajaxSettings: {
-            cache: false
-        }
+        onClose: $.noop
     };
 
     $.fn.jModal.setDefaults = function(hDefaults) {
