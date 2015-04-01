@@ -1,16 +1,16 @@
-## jModal
+# jModal
 Simple jQuery modal plugin
 
 Designed to unify and simplify modals.
 
 ## Usage
-# Include jModal after jQuery.
+#### Include jModal after jQuery.
 
     <script src="jquery-2.1.3.js"></script>
     <script src="jModal.js"></script>
 
-# Add styles for modal (example presented)
-# Use it!
+#### Add styles for modal (example presented)
+#### Use it!
 
     // Simple usage
     $('.open-modal').jModal({
