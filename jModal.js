@@ -1,4 +1,4 @@
-(function (window, console, document, $) {
+;(function (window, console, document, $) {
     'use strict';
 
     if ($.fn.jModal) {
